@@ -27,6 +27,19 @@ namespace Lab1
                 b[j] = 1.0;
         }
 
+        private double HypotheticalX(int iteration)
+        {
+            double x = 0.0;
+
+            for (int i = 0; i < n; ++i)
+                x += a[i] * xs[iteration + i + 1];
+
+            for (int i = 0; i < m; ++i)
+                x += b[i] * us[iteration + i];
+
+            return x;
+        }
+
         private void SelfTuning()
         {
             double[] prevA = new double[n];
@@ -49,11 +62,7 @@ namespace Lab1
 
                     for (int i = 1; i <= r; ++i)
                     {
-                        double sum = xs[i - 1];
-                        for (int k = 0; k < n; ++k)
-                            sum -= prevA[k] * xs[k + i];
-                        for (int k = 0; k < m; ++k)
-                            sum -= prevB[k] * us[k + i];
+                        double sum = xs[i - 1] - HypotheticalX(i - 1);
                         sum /= i;
                         a[j] += 2 * gamma * sum * xs[i];
                     }
@@ -68,11 +77,7 @@ namespace Lab1
 
                     for (int i = 1; i <= r; ++i)
                     {
-                        double sum = xs[i - 1];
-                        for (int k = 0; k < n; ++k)
-                            sum -= prevA[k] * xs[k + i];
-                        for (int k = 0; k < m; ++k)
-                            sum -= prevB[k] * us[k + i];
+                        double sum = xs[i - 1] - HypotheticalX(i - 1);
                         sum /= i;
                         b[j] += 2 * gamma * sum * us[i];
                     }
