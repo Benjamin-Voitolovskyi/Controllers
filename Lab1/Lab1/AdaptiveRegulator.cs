@@ -42,53 +42,44 @@ namespace Lab1
 
         private void SelfTuning()
         {
-            double[] prevA = new double[n];
-            double[] prevB = new double[m];
-
-            Array.Copy(a, prevA, n);
-            Array.Copy(b, prevB, m);
-
-            const double gamma = 0.1;
-            const double precision = 0.01;
+            const double gamma = 0.00005;
+            const double precision = 0.1;
             double diff;
-
-            do
+            for (int i = 0; i < n; ++i)
             {
-                diff = 0.0;
-
-                for (int j = 0; j < n; ++j)
+                do
                 {
-                    a[j] = prevA[j];
+                    double newAi = a[i];
 
-                    for (int i = 1; i <= r; ++i)
-                    {
-                        double sum = xs[i - 1] - HypotheticalX(i - 1);
-                        sum /= i;
-                        a[j] += 2 * gamma * sum * xs[i];
-                    }
+                    double sum = 0.0;
+                    for (int j = 1; j <= r; ++j)
+                        sum += (xs[j - 1] - HypotheticalX(j - 1)) * xs[i + j] / j;
 
-                    if (Math.Abs(a[j] - prevA[j]) > diff)
-                        diff = Math.Abs(a[j] - prevA[j]);
-                }
+                    newAi += 2 * gamma * sum;
 
-                for (int j = 0; j < m; ++j)
+                    diff = Math.Abs(newAi - a[i]);
+
+                    a[i] = newAi;
+                } while (diff > precision);
+            }
+
+            for (int i = 0; i < m; ++i)
+            {
+                do
                 {
-                    b[j] = prevB[j];
+                    double newBi = b[i];
 
-                    for (int i = 1; i <= r; ++i)
-                    {
-                        double sum = xs[i - 1] - HypotheticalX(i - 1);
-                        sum /= i;
-                        b[j] += 2 * gamma * sum * us[i];
-                    }
+                    double sum = 0.0;
+                    for (int j = 1; j <= r; ++j)
+                        sum += (xs[j - 1] - HypotheticalX(j - 1)) * us[i + j - 1] / j;
 
-                    if (Math.Abs(b[j] - prevB[j]) > diff)
-                        diff = Math.Abs(b[j] - prevB[j]);
-                }
+                    newBi += 2 * gamma * sum;
 
-                Array.Copy(a, prevA, n);
-                Array.Copy(b, prevB, m);
-            } while (diff > precision);
+                    diff = Math.Abs(newBi - b[i]);
+
+                    b[i] = newBi;
+                } while (diff > precision);
+            }
         }
 
         public override double X(double time)

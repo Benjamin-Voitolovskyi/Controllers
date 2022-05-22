@@ -19,8 +19,9 @@ namespace Lab1
 
         private void StartButton_Click(object sender, EventArgs e)
         {
-            timer1.Interval = 1;
+            timer1.Interval = 100;
             pidRegulator.DeltaTime = timer1.Interval / 1000.0;
+            adaptiveRegulator.DeltaTime = pidRegulator.DeltaTime;
             timer1.Start();
 
             chart1.Series[0].Points.AddXY(time, pidRegulator.Y(time));
